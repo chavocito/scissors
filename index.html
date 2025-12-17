@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Christmas Surprise! 🎄</title>
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle, #1a472a, #0d2b19);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 1s ease;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 2px solid #d4af37;
+            max-width: 420px;
+            width: 90%;
+        }
+
+        h1 { color: #ff4d4d; margin-top: 0; }
+
+        .input-group { margin: 25px 0; }
+
+        label {
+            display: none;
+        }
+
+        input {
+            padding: 15px;
+            width: 80%;
+            border-radius: 30px;
+            border: 2px solid transparent;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: #d4af37; box-shadow: 0 0 10px #d4af37; }
+
+        button {
+            background: #d42426;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        button:hover { background: #ff4d4d; transform: translateY(-2px); }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            min-height: 30px;
+            line-height: 1.4;
+        }
+
+        .hint-text {
+            font-size: 0.85rem;
+            color: #bdc3c7;
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="gameCard">
+    <div id="uiContent">
+        <h1>Merry Christmas! 🎄</h1>
+        <p>I got you a little something... <br>Can you guess what it is?</p>
+
+        <div class="input-group">
+            <label for="guessInput">Guess</label>
+            <input type="text" id="guessInput" placeholder="Enter your guess...">
+        </div>
+
+        <button onclick="checkGuess()">Check My Guess!</button>
+
+        <div id="message"></div>
+
+        <p class="hint-text">
+            Possibilities: A puppy, a new phone, footwear, a wig, glasses, a bag, a dress... or something else?
+        </p>
+    </div>
+</div>
+
+<script>
+    function checkGuess() {
+        const inputField = document.getElementById('guessInput');
+        const guess = inputField.value.toLowerCase();
+        const messageDiv = document.getElementById('message');
+        const uiContent = document.getElementById('uiContent');
+
+        // Logic: Checks if BOTH 'apple' and 'watch' are in the string
+        if (guess.includes('apple') && guess.includes('watch')) {
+            // Success!
+            document.body.style.background = 'radial-gradient(circle, #d42426, #4b0000)';
+
+            // Trigger Confetti
+            fireConfetti();
+
+            uiContent.innerHTML = `
+                    <h1 style="color: #ffd700;">✨ YOU GOT IT! ✨</h1>
+                    <div style="font-size: 5rem; margin: 20px 0;">⌚</div>
+                    <p style="font-size: 1.4rem;">It's an <strong>Apple Watch</strong>!</p>
+                    <p>Merry Christmas, I hope you love it! ❤️</p>
+                    <button onclick="location.reload()" style="background: #fff; color: #d42426; margin-top: 15px;">Play Again</button>
+                `;
+        } else {
+            // Wrong Guess
+            messageDiv.innerHTML = "❌ Not quite! Try again, love.";
+            messageDiv.style.color = "#ff4d4d";
+
+            // Simple shake effect
+            inputField.style.border = "2px solid #ff4d4d";
+            setTimeout(() => { inputField.style.border = "2px solid transparent"; }, 500);
+        }
+    }
+
+    function fireConfetti() {
+        const duration = 5 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function() {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            // since particles fall down, start a bit higher than random
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+    }
+
+    // Allow pressing "Enter" to submit
+    document.getElementById("guessInput").addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+            checkGuess();
+        }
+    });
+</script>
+</body>
+</html>
